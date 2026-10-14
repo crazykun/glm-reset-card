@@ -9,6 +9,7 @@ Agent Skill：一句话查 GLM 套餐剩余额度、用掉 GLM 用量重置卡�
 - `quota`：套餐档位、5 小时窗口 / 每周额度用量百分比与下次重置时间、MCP 工具月度调用额度（分工具明细）
 - `list` / `pick`：重置卡余额、自动选出最早过期的可用卡
 - `use`：消耗一张重置卡立即重置对应额度（需确认）
+- `setup`：鉴权引导配置——询问 API 地址与 Key（终端隐藏输入），调用只读接口验证通过后保存到 `~/.config/glm-reset-card/config.toml`（权限 600）；未配置时任何命令都会自动进入引导，`setup --show` 查看当前来源（Key 脱敏）
 
 ## 前置条件
 
@@ -28,12 +29,13 @@ git clone https://github.com/crazykun/glm-reset-card.git ~/.zcode/skills/glm-res
 git clone https://github.com/crazykun/glm-reset-card.git ~/.claude/skills/glm-reset-card  # Claude Code
 ```
 
-## 配置鉴权（二选一）
+## 配置鉴权（三选一）
 
-1. 环境变量：`GLM_API_KEY`（可选 `GLM_BASE_URL`，国际站设为 `https://api.z.ai`）
-2. 什么都不做——自动复用 [GLMeter](https://github.com/crazykun/GLMeter) 的配置 `~/.config/glmeter/config.toml`
+1. 什么都不做——自动复用 [GLMeter](https://github.com/crazykun/GLMeter) 的配置 `~/.config/glmeter/config.toml`（已装 GLMeter 的用户无感）
+2. 运行 `scripts/glm_reset_card.sh setup`：交互式询问地址和 Key（终端隐藏输入），调用只读接口验证通过后保存（Agent 助手在未配置时会主动向你要这两项信息并代为配置）；`setup --show` 查看当前来源
+3. 环境变量：`GLM_API_KEY`（可选 `GLM_BASE_URL`，国际站设为 `https://api.z.ai`）
 
-API Key 只在本机读取使用，不会出现在任何输出里。
+API Key 只保存在本机配置文件（权限 600）中用于调用，任何输出均为脱敏形式。
 
 ## 安全设计
 

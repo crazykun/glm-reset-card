@@ -1,7 +1,7 @@
 ---
 name: glm-reset-card
-version: 0.2.0
-description: 查询 GLM Coding 套餐剩余额度与使用用量重置卡（智谱开放平台 / Z.ai）：查 5 小时窗口/每周额度用量与下次重置时间、MCP 月度调用额度、重置卡余额，以及使用一张 5 小时或周额度重置卡立即重置对应用量额度。当用户说「glm还有多少额度」「套餐还剩多少额度」「额度用了多少」「什么时候重置/恢复」「用/使用重置卡」「帮我重置 5 小时额度」「重置周额度」「重置卡还剩几张」等时使用。查询类命令只读；消耗卡片不可撤销，调用 use 前必须获得用户明确确认。
+version: 0.3.0
+description: 查询 GLM Coding 套餐剩余额度与使用用量重置卡（智谱开放平台 / Z.ai）：查 5 小时窗口/每周额度用量与下次重置时间、MCP 月度调用额度、重置卡余额，配置鉴权（API 地址 + API Key），以及使用一张 5 小时或周额度重置卡立即重置对应用量额度。当用户说「glm还有多少额度」「套餐还剩多少额度」「额度用了多少」「什么时候重置/恢复」「用/使用重置卡」「帮我重置 5 小时额度」「重置周额度」「重置卡还剩几张」「配置/初始化 GLM 鉴权」「设置 GLM API Key」等时使用。查询与配置类命令安全；消耗卡片不可撤销，调用 use 前必须获得用户明确确认。
 ---
 
 # GLM 套餐额度与用量重置卡
@@ -42,9 +42,23 @@ description: 查询 GLM Coding 套餐剩余额度与使用用量重置卡（智�
 - **不要自动重试失败的 use**。脚本每次调用生成新的 requestId（幂等键），换新 ID 重试可能重复消耗。use 超时或结果不明时，先 `list` 确认该卡是否已被消耗，再决定下一步。
 - 脚本不会回显 API Key；对话中也不要输出配置文件原始内容。
 
-## 鉴权与配置
+## 鉴权初始化与配置
 
-优先级：环境变量 `GLM_API_KEY` / `GLM_BASE_URL` > GLMeter 桌面端配置 `~/.config/glmeter/config.toml`（macOS 为 `~/Library/Application Support/glmeter/config.toml`）。`base_url` 默认 `https://open.bigmodel.cn`，国际站为 `https://api.z.ai`。
+优先级：环境变量 `GLM_API_KEY` / `GLM_BASE_URL` > 本技能自有配置 `~/.config/glm-reset-card/config.toml`（macOS 为 `~/Library/Application Support/glm-reset-card/config.toml`，由 `setup` 写入，权限 600）> GLMeter 桌面端配置 `~/.config/glmeter/config.toml`。`base_url` 默认 `https://open.bigmodel.cn`，国际站为 `https://api.z.ai`。
+
+未配置（未初始化）时的行为：
+
+- **交互终端**：运行任意命令会自动进入引导——询问 API 地址（回车默认国内站）和 API Key（隐藏输入），调用只读额度接口**验证通过后才保存**；失败可重试，不会写入错误配置。
+- **Agent 非交互环境**：命令报错退出并给出指引。此时应**主动向用户询问**两项信息：
+  1. API 地址：国内站 `https://open.bigmodel.cn`，国际站 `https://api.z.ai`（用户不确定就用国内站）；
+  2. API Key：智谱开放平台控制台「API Keys」页获取。
+
+  拿到后执行（验证通过才落盘）：
+  ```bash
+  glm_reset_card.sh setup --api-key <KEY> [--base-url <URL>]
+  ```
+  `setup --show` 可查看当前鉴权来源与脱敏 Key，用于确认配置是否生效。
+- **安全注意**：API Key 是敏感凭据——不要在对话输出中回显完整 Key、不要写进代码或提交内容；脚本自身所有输出均为脱敏形式。
 
 ## 错误处理
 
