@@ -1,8 +1,14 @@
 # glm-reset-card
 
-Agent Skill：一句话用掉 GLM 用量重置卡（智谱开放平台 / Z.ai）。
+Agent Skill：一句话查 GLM 套餐剩余额度、用掉 GLM 用量重置卡（智谱开放平台 / Z.ai）。
 
-对 Claude Code / ZCode / Cursor 等支持 [Agent Skills](https://agentskills.io) 的编码助手说「**用一张 5 小时重置卡**」「**查下重置卡余额**」，它会自动查卡、选出最早过期的一张、向你确认后消耗——逻辑与桌面工具 [GLMeter](https://github.com/crazykun/GLMeter) 的「点击使用重置卡」完全一致。
+对 Claude Code / ZCode / Cursor 等支持 [Agent Skills](https://agentskills.io) 的编码助手说「**GLM 还有多少额度**」「**套餐还剩多少额度**」「**用一张 5 小时重置卡**」「**查下重置卡余额**」，它会自动查额度/查卡、选出最早过期的一张、向你确认后消耗——逻辑与桌面工具 [GLMeter](https://github.com/crazykun/GLMeter) 完全一致。
+
+## 功能
+
+- `quota`：套餐档位、5 小时窗口 / 每周额度用量百分比与下次重置时间、MCP 工具月度调用额度（分工具明细）
+- `list` / `pick`：重置卡余额、自动选出最早过期的可用卡
+- `use`：消耗一张重置卡立即重置对应额度（需确认）
 
 ## 前置条件
 
